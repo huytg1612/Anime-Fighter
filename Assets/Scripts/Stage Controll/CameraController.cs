@@ -30,13 +30,13 @@ public class CameraController : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         Resize();
 
     }
 
-    private void Resize()
+    public void Resize()
     {
         Player1_PostionX = Player1.transform.localPosition.x;
         Player2_PostionX = Player2.transform.localPosition.x;
@@ -57,16 +57,12 @@ public class CameraController : MonoBehaviour
             if (Player1_PostionX >= Cam_PositionX_Max -1 || Player2_PostionX >= Cam_PositionX_Max - 1)
             {
                 transform.localPosition = new Vector3(transform.localPosition.x + (10 * Time.deltaTime), 0, -10);
-
-                Cam_PositionX_Max = myCam.transform.position.x + HalfWidth;
-                Cam_PositionX_Min = myCam.transform.position.x - HalfWidth;
             }
             else if(Player1_PostionX < Cam_PositionX_Min + 1|| Player2_PostionX < Cam_PositionX_Min + 1)
             {
                 transform.localPosition = new Vector3(transform.localPosition.x - (10 * Time.deltaTime), 0, -10);
 
-                Cam_PositionX_Max = myCam.transform.position.x + HalfWidth;
-                Cam_PositionX_Min = myCam.transform.position.x - HalfWidth;
+
             }
             else
             {
@@ -82,14 +78,13 @@ public class CameraController : MonoBehaviour
                     }
 
                     transform.localPosition = new Vector3(newPos, 0, -10);
-
-                    Cam_PositionX_Max = myCam.transform.position.x + HalfWidth;
-                    Cam_PositionX_Min = myCam.transform.position.x - HalfWidth;
                 }
             }
 
             isResized = false;
 
         }
+        Cam_PositionX_Max = myCam.transform.position.x + HalfWidth;
+        Cam_PositionX_Min = myCam.transform.position.x - HalfWidth;
     }
 }

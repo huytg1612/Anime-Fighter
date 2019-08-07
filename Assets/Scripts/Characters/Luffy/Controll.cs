@@ -9,9 +9,15 @@ public class Controll : MonoBehaviour
     private AnimatorStateInfo animState;
     private AudioSource audioPlayer;
 
+    private GameObject Player2;
+
     [SerializeField]
     private float forceX, forceY;
 
+    private CameraShake cameraShake;
+    private CameraController cameraCon;
+
+    private int jumpTimes = 2,jump = 0;
     private float positionX,positionY;
     private float scaleX,scaleY;
     private bool isGrounded;
@@ -19,6 +25,13 @@ public class Controll : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Physics2D.IgnoreCollision(GetComponent<Collider2D>(),GameObject.Find("Player2").GetComponent<Collider2D>());
+
+        cameraShake = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraShake>();
+        cameraCon = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraController>();
+
+        Player2 = GameObject.Find("Player2");
+
         anim = GetComponent<Animator>();
         myBody = GetComponent<Rigidbody2D>();
         animState = new AnimatorStateInfo();
@@ -38,54 +51,71 @@ public class Controll : MonoBehaviour
 
         if (!PlayingAttack())
         {
-            if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D))
+            if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D) || Input.GetKeyDown(KeyCode.W))
             {
-                if (Input.GetKey(KeyCode.A))
+                if (Input.GetKeyDown(KeyCode.W) && (jump < jumpTimes))
                 {
-                    if (scaleX > 0)
+                    myBody.velocity = new Vector2(0, forceY);
+                    if (jump == 0)
                     {
-                        transform.localScale = new Vector2(scaleX * -1, scaleY);
+                        anim.SetTrigger("Jump");
                     }
-                    transform.localPosition = new Vector2(positionX - (forceX * Time.deltaTime), positionY);
 
+                    jump++;
                 }
                 else
                 {
-                    if (scaleX < 0)
+                    if (Input.GetKey(KeyCode.A))
                     {
-                        transform.localScale = new Vector2(scaleX * -1, scaleY);
+                        if (scaleX > 0)
+                        {
+                            transform.localScale = new Vector2(scaleX * -1, scaleY);
+                        }
+                        transform.localPosition = new Vector2(positionX - (forceX * Time.deltaTime), positionY);
+
                     }
-                    transform.localPosition = new Vector2(positionX + (forceX * Time.deltaTime), positionY);
+                    else
+                    {
+                        if (scaleX < 0)
+                        {
+                            transform.localScale = new Vector2(scaleX * -1, scaleY);
+                        }
+                        transform.localPosition = new Vector2(positionX + (forceX * Time.deltaTime), positionY);
 
+                    }
+                    anim.SetBool("Run", true);
                 }
-
-                anim.SetBool("Run", true);
 
             }
             else if (Input.GetKeyDown(KeyCode.J))
             {
-                anim.Play("Galting_Gun");
-                anim.Play("Galting_Gun");
-                anim.Play("Galting_Gun");
-            }
-            else if (Input.GetKeyDown(KeyCode.W) && isGrounded)
-            {
-                myBody.velocity = new Vector2(0, forceY);
-                anim.SetTrigger("Jump");
-                isGrounded = false;
+                anim.SetTrigger("Attack_J");
             }
             else if (Input.GetKeyDown(KeyCode.H))
             {
-                anim.SetTrigger("Attack");
+                anim.SetTrigger("Attack_H");
             }
             else if (Input.GetKeyDown(KeyCode.U))
             {
                 anim.SetTrigger("Attack_U");
             }
+            else if (Input.GetKeyDown(KeyCode.I))
+            {
+                anim.SetTrigger("Attack_I");
+            }
+            else if (Input.GetKeyDown(KeyCode.O))
+            {
+                anim.SetTrigger("Attack_O");
+            }
             else
             {
                 anim.SetBool("Run", false);
             }
+        }
+
+        if (anim.GetCurrentAnimatorStateInfo(0).IsTag("Static"))
+        {
+            Direct();
         }
     }
 
@@ -93,7 +123,19 @@ public class Controll : MonoBehaviour
     {
         if (collision.gameObject.tag.Equals("Ground"))
         {
-            isGrounded = true;
+            if (anim.GetCurrentAnimatorStateInfo(0).IsName("GetDown"))
+            {
+                cameraShake.Shake(0.1f, 0.5f);
+                cameraCon.Resize();
+
+                StartCoroutine(HandleGetUpAnim(1f));
+            }
+            if (anim.GetCurrentAnimatorStateInfo(0).IsName("Jump"))
+            {
+                anim.SetTrigger("Reset");
+            }
+
+            jump = 0;
         }
     }
 
@@ -105,5 +147,29 @@ public class Controll : MonoBehaviour
     public void PlaySound(AudioClip clip)
     {
         GameUtils.PlaySound(clip, audioPlayer);
+    }
+
+    private void Direct()
+    {
+        if (Player2.transform.localPosition.x > positionX)
+        {
+            if (scaleX < 0)
+            {
+                transform.localScale = new Vector2(-scaleX, scaleY);
+            }
+        }
+        else if (Player2.transform.localPosition.x < positionX)
+        {
+            if (scaleX > 0)
+            {
+                transform.localScale = new Vector2(-scaleX, scaleY);
+            }
+        }
+    }
+
+    IEnumerator HandleGetUpAnim(float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+        anim.SetTrigger("GetUp");
     }
 }

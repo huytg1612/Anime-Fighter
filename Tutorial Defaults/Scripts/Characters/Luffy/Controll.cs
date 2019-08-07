@@ -6,6 +6,8 @@ public class Controll : MonoBehaviour
 {
     private Animator anim;
     private Rigidbody2D myBody;
+    private AnimatorStateInfo animState;
+    private AudioSource audioPlayer;
 
     [SerializeField]
     private float forceX, forceY;
@@ -19,6 +21,8 @@ public class Controll : MonoBehaviour
     {
         anim = GetComponent<Animator>();
         myBody = GetComponent<Rigidbody2D>();
+        animState = new AnimatorStateInfo();
+        audioPlayer = GetComponent<AudioSource>();
 
         isGrounded = true;
     }
@@ -32,49 +36,64 @@ public class Controll : MonoBehaviour
         positionX = transform.localPosition.x;
         positionY = transform.localPosition.y;
 
-        if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D))
+        if (!PlayingAttack())
         {
-            if (Input.GetKey(KeyCode.A))
+            if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D))
             {
-                if(scaleX > 0)
+                if (Input.GetKey(KeyCode.A))
                 {
-                    transform.localScale = new Vector2(scaleX * -1, scaleY);
-                }
-                transform.localPosition = new Vector2(positionX - (forceX*Time.deltaTime), positionY);
+                    if (scaleX > 0)
+                    {
+                        transform.localScale = new Vector2(scaleX * -1, scaleY);
+                    }
+                    transform.localPosition = new Vector2(positionX - (forceX * Time.deltaTime), positionY);
 
+                }
+                else
+                {
+                    if (scaleX < 0)
+                    {
+                        transform.localScale = new Vector2(scaleX * -1, scaleY);
+                    }
+                    transform.localPosition = new Vector2(positionX + (forceX * Time.deltaTime), positionY);
+
+                }
+
+                anim.SetBool("Run", true);
+
+            }
+            else if (Input.GetKeyDown(KeyCode.J))
+            {
+                anim.Play("Galting_Gun");
+                anim.Play("Galting_Gun");
+                anim.Play("Galting_Gun");
+            }
+            else if (Input.GetKeyDown(KeyCode.W) && isGrounded)
+            {
+                myBody.velocity = new Vector2(0, forceY);
+                anim.SetTrigger("Jump");
+                isGrounded = false;
+            }
+            else if (Input.GetKeyDown(KeyCode.H))
+            {
+                anim.SetTrigger("Attack");
+            }
+            else if (Input.GetKeyDown(KeyCode.U))
+            {
+                anim.SetTrigger("Attack_U");
+            }
+            else if (Input.GetKeyDown(KeyCode.I))
+            {
+                anim.SetTrigger("Attack_I");
+            }
+            else if (Input.GetKeyDown(KeyCode.O))
+            {
+                anim.SetTrigger("Attack_O");
             }
             else
             {
-                if(scaleX < 0)
-                {
-                    transform.localScale = new Vector2(scaleX * -1, scaleY);
-                }
-                transform.localPosition = new Vector2(positionX + (forceX * Time.deltaTime), positionY);
-
+                anim.SetBool("Run", false);
             }
-
-            anim.SetBool("Run",true);
-
-        }
-        else if (Input.GetKeyDown(KeyCode.J))
-        {
-            anim.Play("Galting_Gun");
-            anim.Play("Galting_Gun");
-            anim.Play("Galting_Gun");
-        }
-        else if (Input.GetKeyDown(KeyCode.W) && isGrounded)
-        {
-            myBody.velocity = new Vector2(0,forceY);
-            anim.SetTrigger("Jump");
-            isGrounded = false;
-        }
-        else if (Input.GetKeyDown(KeyCode.H))
-        {
-            anim.SetTrigger("Attack");
-        }
-        else
-        {
-            anim.SetBool("Run", false);
         }
     }
 
@@ -86,5 +105,13 @@ public class Controll : MonoBehaviour
         }
     }
 
-    
+    private bool PlayingAttack()
+    {
+        return anim.GetCurrentAnimatorStateInfo(0).IsTag("Attack");
+    }
+
+    public void PlaySound(AudioClip clip)
+    {
+        GameUtils.PlaySound(clip, audioPlayer);
+    }
 }
