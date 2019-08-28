@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b18869cff9fa48478c70076d7868163, type: 3}
+  m_Name: Sanji
+  m_EditorClassIdentifier: 
+  characterName: Sanji
+  characterSprite: {fileID: 21300000, guid: 6cf4d5e05e45c874a8dc39365d27a1f0, type: 3}
+  characterPoster: {fileID: 21300016, guid: 6cf4d5e05e45c874a8dc39365d27a1f0, type: 3}
+  characterPortrait: {fileID: 21300024, guid: ae5b0b0454ca6a843bf552a010706987, type: 3}
+  characterVoice: {fileID: 0}
+  controller: {fileID: 9100000, guid: f855ed25e562f434f8c5c263d92ce270, type: 2}

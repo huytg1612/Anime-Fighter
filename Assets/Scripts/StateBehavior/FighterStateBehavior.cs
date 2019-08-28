@@ -10,9 +10,17 @@ public class FighterStateBehavior : StateMachineBehaviour
     private Rigidbody2D FighterBody;
 
     private GomuPistol PistolScene;
+    public float damage;
 
     [SerializeField]
     private AudioClip soundEff;
+    [SerializeField]
+    private GameObject spawnObject;
+
+    private DamageCollider damageColli_Player1;
+    private DamageCollider damageColli_Player2;
+
+    public float plusPos_X = 150, plusPos_Y = 3;
 
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
@@ -41,10 +49,20 @@ public class FighterStateBehavior : StateMachineBehaviour
         }
         if (Fighter != null)
         {
+            damageColli_Player1 = GameObject.Find("Player1").GetComponentInChildren<DamageCollider>();
+
+            if(damageColli_Player1 != null)
+                damageColli_Player1.Damage = damage;
+
             FighterAnimatorBegin(Fighter.gameObject,"Player2", animator, stateInfo, layerIndex);
         }
         if (Fighter2 != null)
         {
+            DamageCollider damageColli = GameObject.Find("Player2").GetComponentInChildren<DamageCollider>();
+
+            if (damageColli_Player2 != null)
+                damageColli.Damage = damage;
+
             FighterAnimatorBegin(Fighter2.gameObject,"Player1", animator, stateInfo, layerIndex);
         }
     }
@@ -59,7 +77,13 @@ public class FighterStateBehavior : StateMachineBehaviour
     {
         if(Fighter != null)
         {
-            Fighter.GetComponent<Rigidbody2D>().isKinematic = false;
+            //Fighter.GetComponent<Rigidbody2D>().isKinematic = false;
+
+            //if (damageColli_Player1 != null)
+            //{
+            //    damageColli_Player1.Damage = 0;
+            //}
+
         }
         if (Fighter2 != null)
         {
@@ -101,29 +125,89 @@ public class FighterStateBehavior : StateMachineBehaviour
             ano_scaleY = ano_fighter.transform.localScale.y;
         }
 
+        if (stateInfo.IsTag("Attack_Air"))
+        {
+            fighter.GetComponent<Rigidbody2D>().isKinematic = true;
+        }
+        else
+        {
+            fighter.GetComponent<Rigidbody2D>().isKinematic = false;
+        }
+
+        if (stateInfo.IsTag("Attack_Far"))
+        {
+            if(scaleX > 0)
+            {
+                SpawnObject(positionX + 1, postionY);
+            }
+            else
+            {
+                spawnObject.transform.localScale = new Vector2(-spawnObject.transform.localScale.x, spawnObject.transform.localScale.y);
+                SpawnObject(positionX - 1, postionY);
+            }
+
+
+
+        }
+
         //At the begin animator
-        if (stateInfo.IsName("Bazooka"))
+        if (stateInfo.IsTag("Attack_Dash"))
         {
             if(ano_fighter != null)
             {
                 if (scaleX > 0)
                 {
-                    fighter.transform.localPosition = new Vector2(ano_positionX - (200 * Time.deltaTime), postionY);
+                    float newPos = ano_positionX - (plusPos_X * Time.deltaTime);
+
+                    if (positionX < newPos)
+                    {
+                        fighter.transform.localPosition = new Vector2(newPos, postionY);
+                    }
                 }
                 else if (scaleX < 0)
                 {
-                    fighter.transform.localPosition = new Vector2(ano_positionX + (200 * Time.deltaTime), postionY);
+                    float newPos = ano_positionX + (plusPos_X * Time.deltaTime);
+
+                    if(positionX > newPos)
+                    {
+                        fighter.transform.localPosition = new Vector2(newPos, postionY);
+                    }
                 }
             }
         }
-        else if (stateInfo.IsName("Air_Foot"))
+        else if (stateInfo.IsTag("Attack_Air"))
         {
-            fighter.GetComponent<Rigidbody2D>().isKinematic = true;
-
             if(ano_fighter != null)
             {
-                fighter.transform.localPosition = new Vector2(ano_positionX, ano_postionY + 2);
+                if(scaleX > 0)
+                {
+                    fighter.transform.localPosition = new Vector2(ano_positionX - (plusPos_X * Time.deltaTime), ano_postionY + plusPos_Y);
+                }
+                else
+                {
+                    fighter.transform.localPosition = new Vector2(ano_positionX + (plusPos_X * Time.deltaTime), ano_postionY + plusPos_Y);
+                }
             }
+        }else if (stateInfo.IsTag("Dash"))
+        {
+            if(scaleX > 0)
+            {
+                fighter.transform.localPosition = new Vector2(positionX + 30 * Time.deltaTime, postionY);
+            }
+            else
+            {
+                fighter.transform.localPosition = new Vector2(positionX - 30 * Time.deltaTime, postionY);
+            }
+
+        }
+
+    }
+
+    private void SpawnObject(float x,float y)
+    {
+        if(spawnObject != null)
+        {
+            Instantiate(spawnObject, new Vector2(x, y), Quaternion.identity);
         }
     }
 }

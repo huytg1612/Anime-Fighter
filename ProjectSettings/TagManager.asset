@@ -6,6 +6,9 @@ TagManager:
   tags:
   - Ground
   - AttackPoint
+  - Component
+  - AttackObject
+  - SceneUltimate
   layers:
   - Default
   - TransparentFX

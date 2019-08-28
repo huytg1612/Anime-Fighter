@@ -60,16 +60,28 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\AttackObject.cs" />
+    <Compile Include="Assets\Auto Letterbox\ForceCameraRatio.cs" />
+    <Compile Include="Assets\Character.cs" />
+    <Compile Include="Assets\CharacterSelect.cs" />
+    <Compile Include="Assets\ControllAI.cs" />
+    <Compile Include="Assets\FightCombo.cs" />
+    <Compile Include="Assets\FightManage.cs" />
+    <Compile Include="Assets\GameManage.cs" />
+    <Compile Include="Assets\PointerDectection.cs" />
     <Compile Include="Assets\Scripts\Camera\CameraShake.cs" />
+    <Compile Include="Assets\Scripts\Characters\Being_Attack.cs" />
+    <Compile Include="Assets\Scripts\Characters\Being_Attack2.cs" />
+    <Compile Include="Assets\Scripts\Characters\Controll.cs" />
     <Compile Include="Assets\Scripts\Characters\Controll2.cs" />
-    <Compile Include="Assets\Scripts\Characters\Luffy\Being_Attack.cs" />
-    <Compile Include="Assets\Scripts\Characters\Luffy\Controll.cs" />
     <Compile Include="Assets\Scripts\Collider Handle\DamageCollider.cs" />
     <Compile Include="Assets\Scripts\GameUtils.cs" />
     <Compile Include="Assets\Scripts\GameUtilsScene.cs" />
     <Compile Include="Assets\Scripts\Skill Scenes\GomuPistol.cs" />
     <Compile Include="Assets\Scripts\Stage Controll\CameraController.cs" />
     <Compile Include="Assets\Scripts\StateBehavior\FighterStateBehavior.cs" />
+    <Compile Include="Assets\UltimateSceneBehaviour.cs" />
+    <Compile Include="Assets\VersusManage.cs" />
     <Reference Include="Cinemachine">
       <HintPath>D:/Unity Projects/Anime Fighter/Library/ScriptAssemblies/Cinemachine.dll</HintPath>
     </Reference>
